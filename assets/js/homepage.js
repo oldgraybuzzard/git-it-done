@@ -10,12 +10,20 @@ var getUserRepos = function(user){
 
     //make request to the url
     fetch(apiUrl).then(function(response) {
-        response.json().then(function(data) {
+        // request was successful
+        if (response.ok) {
+            response.json().then(function(data) {
             displayRepos(data, user);
-            console.log(data);
         });
-    });
-};
+    } else {
+        alert("error: GitHub User Not Found");
+    }
+    })
+        .catch(function(error) {
+            // Notice this `.catch()` getting chained onto the end of the `.then` method
+        alert("Unable to connect to GitHub");    
+        });
+    };
 
 var formSubmitHandler = function(event) {
     event.preventDefault();
@@ -32,6 +40,11 @@ var formSubmitHandler = function(event) {
 };
 
 var displayRepos = function(repos, searchTerm) {
+    //check if api returned any repos
+    if (repos.length === 0) {
+        repoContainerEl.textContent = "No respositories found.";
+        return;
+    }
     // loop over repos
     for (var i = 0; i < repos.length; i++) {
         // format repo name
